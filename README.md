@@ -89,3 +89,80 @@ Child mini-css-extract-plugin node_modules/css-loader/dist/cjs.js!css/app.css:
         + 1 hidden module
 [debug] Duplicate channel join for topic "phoenix:live_reload" in Phoenix.LiveReloader.Socket. Closing existing channel for new join.
 ```
+
+### Generate Post entity
+
+```bash
+mix phx.gen.html Blog Post posts title:string body:text
+```
+
+```bash
+* creating lib/demo_web/controllers/post_controller.ex
+* creating lib/demo_web/templates/post/edit.html.eex
+* creating lib/demo_web/templates/post/form.html.eex
+* creating lib/demo_web/templates/post/index.html.eex
+* creating lib/demo_web/templates/post/new.html.eex
+* creating lib/demo_web/templates/post/show.html.eex
+* creating lib/demo_web/views/post_view.ex
+* creating test/demo_web/controllers/post_controller_test.exs
+* creating lib/demo/blog/post.ex
+* creating priv/repo/migrations/20200409085654_create_posts.exs
+* creating lib/demo/blog.ex
+* injecting lib/demo/blog.ex
+* creating test/demo/blog_test.exs
+* injecting test/demo/blog_test.exs
+
+Add the resource to your browser scope in lib/demo_web/router.ex:
+
+    resources "/posts", PostController
+
+
+Remember to update your repository by running migrations:
+
+    $ mix ecto.migrate
+```
+
+lib/demo_web/router.ex
+
+```elixir
+defmodule DemoWeb.Router do
+
+  ...
+
+  scope "/", DemoWeb do
+    pipe_through :browser
+
+    get "/", PageController, :index
+    resources "/posts", PostController
+  end
+
+  ...
+
+end
+```
+
+```bash
+mix ecto.migrate
+```
+
+```bash
+...
+
+Generated phoenix app
+==> phoenix_live_reload
+Compiling 4 files (.ex)
+Generated phoenix_live_reload app
+==> phoenix_ecto
+Compiling 7 files (.ex)
+Generated phoenix_ecto app
+==> demo
+Compiling 17 files (.ex)
+Generated demo app
+
+13:58:53.115 [info]  == Running 20200409085654 Demo.Repo.Migrations.CreatePosts.change/0 forward
+
+13:58:53.115 [info]  create table posts
+
+13:58:53.125 [info]  == Migrated 20200409085654 in 0.0s
+75.13s user 6.48s system 177% cpu 46.004 total, running mix ecto.migrate
+```
