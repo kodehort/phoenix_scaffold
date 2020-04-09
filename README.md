@@ -166,3 +166,124 @@ Generated demo app
 13:58:53.125 [info]  == Migrated 20200409085654 in 0.0s
 75.13s user 6.48s system 177% cpu 46.004 total, running mix ecto.migrate
 ```
+
+### Generate Comment entity
+
+```bash
+mix phx.gen.html Blog Comment comments body:text post_id:references:posts
+```
+
+```bash
+You are generating into an existing context.
+
+The Demo.Blog context currently has 6 functions and 1 files in its directory.
+
+  * It's OK to have multiple resources in the same context as long as they are closely related. But if a context grows too large, consider breaking it apart
+
+  * If they are not closely related, another context probably works better
+
+The fact two entities are related in the database does not mean they belong to the same context.
+
+If you are not sure, prefer creating a new context over adding to the existing one.
+
+Would you like to proceed? [Yn]
+* creating lib/demo_web/controllers/comment_controller.ex
+* creating lib/demo_web/templates/comment/edit.html.eex
+* creating lib/demo_web/templates/comment/form.html.eex
+* creating lib/demo_web/templates/comment/index.html.eex
+* creating lib/demo_web/templates/comment/new.html.eex
+* creating lib/demo_web/templates/comment/show.html.eex
+* creating lib/demo_web/views/comment_view.ex
+* creating test/demo_web/controllers/comment_controller_test.exs
+* creating lib/demo/blog/comment.ex
+* creating priv/repo/migrations/20200409131556_create_comments.exs
+* injecting lib/demo/blog.ex
+* injecting test/demo/blog_test.exs
+
+Add the resource to your browser scope in lib/demo_web/router.ex:
+
+    resources "/comments", CommentController
+
+
+Remember to update your repository by running migrations:
+
+    $ mix ecto.migrate
+```
+
+lib/demo_web/router.ex
+
+```elixir
+defmodule DemoWeb.Router do
+
+  ...
+
+  scope "/", DemoWeb do
+    pipe_through :browser
+
+    get "/", PageController, :index
+    resources "/posts", PostController
+    resources "/comments", CommentController
+  end
+
+  ...
+
+end
+```
+
+```bash
+mix ecto.migrate
+```
+
+```bash
+Compiling 5 files (.ex)
+Generated demo app
+
+14:24:58.863 [info]  == Running 20200409131556 Demo.Repo.Migrations.CreateComments.change/0 forward
+
+14:24:58.870 [info]  create table comments
+
+14:24:58.884 [info]  create index comments_post_id_index
+
+14:24:58.888 [info]  == Migrated 20200409131556 in 0.0s
+```
+
+lib/demo/blog/post.ex
+
+```elixir
+defmodule Demo.Blog.Post do
+
+  ...
+
+  schema "posts" do
+    field :body, :string
+    field :title, :string
+
+    has_many(:comments, Demo.Comment)
+
+    timestamps()
+  end
+
+  ...
+
+end
+```
+
+lib/demo/blog/comment.ex
+
+```elixir
+defmodule Demo.Blog.Comment do
+
+  ...
+
+  schema "comments" do
+    field :body, :string
+
+    belongs_to(:post, Demo.Post)
+
+    timestamps()
+  end
+
+  ...
+
+end
+```

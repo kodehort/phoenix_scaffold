@@ -6,6 +6,8 @@ defmodule Demo.Blog.Post do
     field :body, :string
     field :title, :string
 
+    has_many(:comments, Demo.Comment)
+
     timestamps()
   end
 
